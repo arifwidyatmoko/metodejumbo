@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Perhitungan JUMBO – Potensi Minyak dari Log Gas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --primary: #1363df;
+      --primary-soft: #e3f2ff;
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --border: #dde3f0;
+      --text-main: #1f2933;
+      --text-muted: #6b7280;
+      --danger: #dc2626;
+      --warning: #f59e0b;
+      --success: #16a34a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e0edff, #f4f6fb 50%);
+      color: var(--text-main);
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-inner {
+      width: 100%;
+      max-width: 1080px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 14px;
+      color: var(--primary);
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1363df, #47b5ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .nav-tagline {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    /* MAIN CONTENT */
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 0 20px 32px;
+    }
+
+    .main-inner {
+      width: 100%;
+      max-width: 1080px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 900px) {
+      .main-inner {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    /* HERO / INFO */
+    .hero {
+      padding-top: 16px;
+    }
+
+    .hero-title {
+      font-size: clamp(26px, 4vw, 32px);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .hero-highlight {
+      color: var(--primary);
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.6;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 18px;
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: 1px solid #d4ddff;
+    }
+
+    .pill-outline {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px dashed #cbd5f5;
+    }
+
+    .hero-points {
+      margin-top: 8px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .hero-points ul {
+      padding-left: 18px;
+      margin: 6px 0 0;
+    }
+
+    .hero-points li {
+      margin-bottom: 2px;
+    }
+
+    .hero-footer {
+      margin-top: 18px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .hero-footer span {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* CALC CARD */
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 18px 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(19, 99, 223, 0.12), transparent 50%);
+      pointer-events: none;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .chip-small {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    label span.hint {
+      font-weight: 400;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    select,
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 7px 9px;
+      border-radius: 9px;
+      border: 1px solid #cbd2e7;
+      font-size: 13px;
+      outline: none;
+      background: #f9fafb;
+    }
+
+    select:focus,
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(19, 99, 223, 0.15);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 58px;
+    }
+
+    .divider {
+      margin: 14px 0 10px;
+      border-top: 1px dashed #d1d5db;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1363df, #47b5ff);
+      color: #ffffff;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-primary:active,
+    .btn-secondary:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .results {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1.1fr 1.2fr;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 600px) {
+      .results {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .score-box {
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(248, 250, 252, 0.9);
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .score-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--text-muted);
+    }
+
+    .score-value {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .score-formula {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .category-text {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 4px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .chip-low {
+      background: #fef2f2;
+      color: var(--danger);
+      border: 1px solid #fecaca;
+    }
+
+    .chip-mid {
+      background: #fffbeb;
+      color: var(--warning);
+      border: 1px solid #fde68a;
+    }
+
+    .chip-high {
+      background: #ecfdf3;
+      color: var(--success);
+      border: 1px solid #bbf7d0;
+    }
+
+    .summary {
+      font-size: 12px;
+      line-height: 1.5;
+      color: #4b5563;
+    }
+
+    .footer-note {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    /* LEGEND */
+    .legend-wrapper {
+      display: flex;
+      justify-content: center;
+      padding: 0 20px 32px;
+    }
+
+    .legend-container {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-top: 4px;
+      width: 100%;
+      max-width: 640px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e2e8f0;
+    }
+
+    .legend-title {
+      font-size: 14px;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #002b54;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 10px;
+    }
+
+    .legend-box {
+      width: 80px;
+      height: 26px;
+      border-radius: 6px;
+    }
+
+    .legend-low { background: #d62828; }   /* merah */
+    .legend-mid { background: #ffdd00; }   /* kuning */
+    .legend-high { background: #1aa34a; }  /* hijau */
+
+    .legend-text {
+      font-size: 13px;
+      color: #333;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="nav-inner">
+        <div>
+          <div class="brand">
+            <div class="brand-icon">J</div>
+            <span>Scoring Jumbo</span>
+          </div>
+          <div class="nav-tagline">Objektif & Konsisten</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="main-inner">
+        <!-- LEFT: HERO / INFO -->
+        <section class="hero">
+          <h1 class="hero-title">
+            Identifikasi <span class="hero-highlight">Hidden Oil</span><br />
+            berbasis Metode JUMBO
+          </h1>
+          <p class="hero-subtitle">
+Alat bantu evaluasi dengan metode integrasi mudlog, Composition Fluid Analysis (CFA), dan korelasi geologi yang digunakan untuk mengidentifikasi hidden oil pada lapisan potensi gas. Scoring Jumbo mampu memberikan probabilitas tipe fluida (oil/gas) secara lebih objektif dan cepat tanpa memerlukan logging tambahan
+.
+          </p>
+
+          <div class="hero-badges">
+            <span class="pill">Bobot: Mudlog 20% · LFA–CFA 30% · Korelasi 50%</span>
+            <span class="pill pill-outline">Skor &gt; 6.4 → High Chance Oil</span>
+          </div>
+
+          <div class="hero-points">
+            <strong>Cara pakai singkat:</strong>
+            <ul>
+              <li>Isi skor Mudlog (A), LFA–CFA (B), dan Korelasi &amp; Dinamik Reservoir (C).</li>
+              <li>Klik <b>Hitung Skor</b> untuk mendapatkan skor total dan kategori peluang minyak.</li>
+              <li>Gunakan hasil ini sebagai screening awal sebelum studi subsurface lanjutan.</li>
+            </ul>
+          </div>
+
+          <div class="hero-footer">
+            Powered by <span>Pertamina</span>  (non-standalone decision basis).
+          </div>
+        </section>
+
+        <!-- RIGHT: CALC CARD -->
+        <section class="card" aria-label="Kalkulator Metode JUMBO">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Kalkulator Metode JUMBO</div>
+              <div class="card-subtitle">
+                Skor JUMBO = (Mudlog × 20%) + (LFA–CFA × 30%) + (Korelasi &amp; Dinamik × 50%)
+              </div>
+            </div>
+            <div class="chip-small">Screening Tool</div>
+          </div>
+
+          <div class="form-row">
+            <label for="wellName">
+              Nama sumur / interval
+              <span class="hint">opsional</span>
+            </label>
+            <input id="wellName" type="text" placeholder="Contoh: UMHK-123 – Sand D-10" />
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Mudlog -->
+          <div class="form-row">
+            <label for="mudlogScore">
+              A. Mudlog <span class="hint">20% · gas show &amp; oil show</span>
+            </label>
+            <select id="mudlogScore">
+              <option value="">Pilih kondisi mudlog…</option>
+              <option value="8">8 – OS kuat / oil show sangat jelas</option>
+              <option value="6">6 – gas peak + indikasi oil show moderat</option>
+              <option value="4">4 – gas peak tanpa indikasi oil yang jelas</option>
+              <option value="2">2 – tidak ada mudlog / indikasi sangat lemah</option>
+            </select>
+          </div>
+
+          <!-- LFA–CFA -->
+          <div class="form-row">
+            <label for="cfaScore">
+              B. LFA–CFA <span class="hint">30% · komposisi fluida (C1–C6+)</span>
+            </label>
+            <select id="cfaScore">
+              <option value="">Pilih pola LFA–CFA…</option>
+              <option value="10">10 – C6+ jelas, wetness tinggi (oil-prone)</option>
+              <option value="6">6 – data sedang / indikasi campuran oil–gas / No CFA</option>
+              <option value="2">2 – gas-like (C1–C5 dominan, tanpa C6+)</option>
+            </select>
+          </div>
+
+          <!-- Korelasi & Dinamik -->
+          <div class="form-row">
+            <label for="corrScore">
+              C. Korelasi &amp; Dinamik Reservoir
+              <span class="hint">50% · posisi struktural &amp; performa dinamik</span>
+            </label>
+            <select id="corrScore">
+              <option value="">Pilih hasil korelasi…</option>
+              <option value="10">10 – Updip tank proven oil / dinamik sangat mendukung</option>
+              <option value="6">6 – Non proven oil/gas tank / korelasi sedang</option>
+              <option value="2">2 – Downdip tank gas / updip tank water / dinamik tidak mendukung</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="notes">
+              Catatan teknis <span class="hint">opsional</span>
+            </label>
+            <textarea id="notes" placeholder="Contoh: CFA run 2019, pola wet gas dengan C6+ kecil; struktur 5 ft di bawah oil leg UMHK-101."></textarea>
+          </div>
+
+          <div class="buttons">
+            <button type="button" class="btn-primary" onclick="hitungSkor()">
+              🔍 Hitung Skor JUMBO
+            </button>
+            <button type="button" class="btn-secondary" onclick="resetForm()">
+              Reset
+            </button>
+          </div>
+
+          <div id="resultSection" class="results" style="display:none;">
+            <div class="score-box">
+              <div class="score-label">Skor Total JUMBO</div>
+              <div id="scoreValue" class="score-value">0.00</div>
+              <div class="score-formula">Kategori: &lt; 6.0 · 6.0–6.4 · &gt; 6.4</div>
+            </div>
+            <div class="score-box">
+              <div class="score-label">Kategori Peluang Minyak</div>
+              <div id="categoryLabel" class="category-text"></div>
+              <div id="categoryChip" class="chip" style="margin-top:6px;"></div>
+            </div>
+            <div class="summary">
+              <strong>Ringkasan interpretasi</strong>
+              <p id="summaryText" style="margin-top:4px;"></p>
+              <div class="footer-note">
+                Hasil ini digunakan sebagai screening awal dan perlu dikonfirmasi melalui studi subsurface lanjutan
+                dan/atau realisasi operasi (WO / tes produksi).
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- LEGEND SKOR JUMBO -->
+    <div class="legend-wrapper">
+      <div class="legend-container">
+        <div class="legend-title">Kategori Skoring JUMBO</div>
+
+        <div class="legend-row">
+          <div class="legend-box legend-low"></div>
+          <span class="legend-text">&lt; 6.0 — Low Chance Oil</span>
+        </div>
+
+        <div class="legend-row">
+          <div class="legend-box legend-mid"></div>
+          <span class="legend-text">6.0 – 6.4 — Medium Chance (50:50 Oil/Gas)</span>
+        </div>
+
+        <div class="legend-row">
+          <div class="legend-box legend-high"></div>
+          <span class="legend-text">&gt; 6.4 — High Chance Oil</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function hitungSkor() {
+      const a = parseFloat(document.getElementById('mudlogScore').value);
+      const b = parseFloat(document.getElementById('cfaScore').value);
+      const c = parseFloat(document.getElementById('corrScore').value);
+
+      if (isNaN(a) || isNaN(b) || isNaN(c)) {
+        alert('Mohon isi semua parameter A, B, dan C terlebih dahulu.');
+        return;
+      }
+
+      // Bobot: 20% – 30% – 50%
+      const score = a * 0.2 + b * 0.3 + c * 0.5;
+      const s = Math.round(score * 100) / 100;
+
+      let category = '';
+      let chipText = '';
+      let chipClass = '';
+      let summary = '';
+
+      // Kategori: <6.0 ; 6.0–6.4 ; >6.4
+      if (s < 6.0) {
+        category = 'Low Chance Oil';
+        chipText = '< 6.0';
+        chipClass = 'chip chip-low';
+        summary =
+          'Skor JUMBO < 6.0 → Low Chance Oil. Umumnya tidak menjadi prioritas utama kandidat workover, kecuali ada pertimbangan strategis atau non-teknis lain.';
+      } else if (s >= 6.0 && s <= 6.4) {
+        category = 'Medium Chance / 50:50 Oil–Gas';
+        chipText = '6.0 – 6.4';
+        chipClass = 'chip chip-mid';
+        summary =
+          'Skor JUMBO 6.0–6.4 → peluang minyak dan gas relatif seimbang (50:50). Disarankan dilakukan kajian subsurface lanjutan sebelum keputusan final workover.';
+      } else {
+        category = 'High Chance Oil';
+        chipText = '> 6.4';
+        chipClass = 'chip chip-high';
+        summary =
+          'Skor JUMBO > 6.4 → High Chance Oil. Zona ini layak diprioritaskan sebagai kandidat workover, dengan tetap memperhitungkan keekonomian dan risiko operasional.';
+      }
+
+      document.getElementById('resultSection').style.display = 'grid';
+      document.getElementById('scoreValue').textContent = s.toFixed(2);
+      document.getElementById('categoryLabel').textContent = category;
+
+      const chip = document.getElementById('categoryChip');
+      chip.className = chipClass;
+      chip.textContent = chipText;
+
+      document.getElementById('summaryText').textContent = summary;
+    }
+
+    function resetForm() {
+      document.getElementById('mudlogScore').value = '';
+      document.getElementById('cfaScore').value = '';
+      document.getElementById('corrScore').value = '';
+      document.getElementById('wellName').value = '';
+      document.getElementById('notes').value = '';
+      document.getElementById('resultSection').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
+jumbo
